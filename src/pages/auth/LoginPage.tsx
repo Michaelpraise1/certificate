@@ -18,7 +18,7 @@ export default function LoginPage() {
     setErrorMsg('');
     
     try {
-      const response = await fetch("http://213.199.63.167:3002/api/v1/login", {
+      const response = await fetch("https://213.199.63.167:3002/api/v1/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
