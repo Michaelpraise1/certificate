@@ -1,30 +1,56 @@
-import React, { useState } from 'react';
-import { Input } from '../../components/ui/Input';
-import { PlusCircle, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import CertificateForm from '../../components/certificate-form';
+import { ChevronLeft } from 'lucide-react';
+
+
+type Certificate = {
+  id: number;
+  display: string;
+  template: string;
+  variables: string;
+  default_variables: string;
+  title: string;
+}
 
 export default function CreateCertificationPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    instructor: '',
-  });
+  const [certificates, setCertificates] = useState<Certificate[]>([]);
+  const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
+  const url = import.meta.env.VITE_API_URL;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    // Simulating API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    console.log('Created certification:', formData);
-    
-    setIsLoading(false);
-    // Reset form or show success toast...
-    setFormData({ title: '', description: '', instructor: '' });
-  };
+  useEffect(() => {
+    async function process() {
+      const response = await fetchCertificates();
+      setCertificates(response);
+    }
+
+    process();
+  }, []);
+
+
+  const fetchCertificates = async () => {
+    const token = localStorage.getItem('token');
+    const request = await fetch(`${url}api/v1/certificates`, {
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const response = await request.json();
+    return response.data;
+  }
+
+  const selectCertificate = (index: number) => {
+    const selectedCert = certificates.filter((c, ix) => ix === index);
+    setSelectedCertificate(selectedCert[0]);
+  }
+
+  const goBack = () => {
+    setSelectedCertificate(null);
+  }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="max-w-full mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white">Create a Certification</h1>
         <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
@@ -32,58 +58,50 @@ export default function CreateCertificationPage() {
         </p>
       </div>
 
-      <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
-        {/* Decorative background element */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-50 block items-center pointer-events-none" />
-        
-        <form onSubmit={handleSubmit} className="space-y-6 relative z-10 w-full max-w-2xl">
-          <Input 
-            label="Certification Title" 
-            placeholder="e.g. Meta Front-End Developer Professional Certificate"
-            value={formData.title}
-            onChange={e => setFormData({...formData, title: e.target.value})}
-            required
-          />
-          
-          <div className="w-full flex flex-col gap-1.5 text-left">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
-              Description
-            </label>
-            <textarea
-              className="flex min-h-[120px] w-full items-center rounded-md border border-gray-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:border-blue-600 transition-colors resize-y dark:text-white"
-              placeholder="Provide a brief description of what this certification entails..."
-              value={formData.description}
-              onChange={e => setFormData({...formData, description: e.target.value})}
-              required
-            />
-          </div>
+      {
+        !selectedCertificate && <div className="bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+          {/* Decorative background element */}
+          <h2 className="text-xl font-bold text-gray-900 dark:text-gray-500 mb-3">Choose a Template</h2>
 
-          <Input 
-            label="Issuing Instructor / Authority" 
-            placeholder="e.g. Dr. John Doe"
-            value={formData.instructor}
-            onChange={e => setFormData({...formData, instructor: e.target.value})}
-            required
-          />
+          {
+            certificates.length > 0 && <div className='flex gap-2 p-2'>
+              {
+                certificates.map((cert, idx) =>
+                  <div className='p-2 w-fit h-fit cursor-pointer hover:border-gray-700 hover:border' key={idx} onClick={() => selectCertificate(idx)}>
+                    {/* image */}
+                    <div className='w-64 h-32 mb-3'>
+                      <img src={`${url}${cert.display}`} alt={cert.title} className='w-full h-full' />
+                    </div>
+                    <div className='text-center text-gray-500'>
+                      <span>{cert.title}</span>
+                    </div>
+                  </div>
+                )
+              }
+            </div>
+          }
+        </div>
+      }
 
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full sm:w-auto flex items-center justify-center py-3 px-6 border border-transparent text-sm font-semibold rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <Loader2 className="animate-spin h-5 w-5 mx-auto" />
-              ) : (
-                <>
-                  <PlusCircle className="mr-2 h-5 w-5" />
-                  Generate Certification Template
-                </>
-              )}
+      {
+        selectedCertificate && <div className="mx-auto max-w-6xl bg-white dark:bg-zinc-900 rounded-3xl p-6 sm:p-8 border border-gray-100 dark:border-zinc-800 shadow-sm relative overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-50 block items-center pointer-events-none" />
+
+          <div className='mb-4'>
+            <button className='flex gap-2 outline p-3 outline-gray-600 rounded-4xl cursor-pointer' onClick={() => goBack()}>
+              <ChevronLeft></ChevronLeft> Back
             </button>
           </div>
-        </form>
-      </div>
+
+
+          <div className='flex justify-center items-center p-3'>
+            <CertificateForm variables={selectedCertificate.variables} baseUrl={url} />
+          </div>
+
+        </div>
+      }
+
     </div>
   );
 }

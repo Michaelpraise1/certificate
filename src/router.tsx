@@ -31,16 +31,15 @@ export const router = createBrowserRouter([
         ],
     },
     {
-        path: "/dashboard",
         element: <DashboardLayout />,
         loader: requireAuth,
         children: [
             {
-                index: true,
+                path: "/dashboard",
                 element: <DashboardOverview />
             },
             {
-                path: "create-certification",
+                path: "/create-certification",
                 element: <CreateCertificationPage />
             }
         ]

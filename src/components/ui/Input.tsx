@@ -9,7 +9,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className = '', label, error, ...props }, ref) => {
     return (
       <div className="w-full flex flex-col gap-1.5 text-left">
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-200 capitalize">
           {label}
         </label>
         <input
