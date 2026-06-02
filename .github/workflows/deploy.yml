@@ -47,7 +47,7 @@ jobs:
             npm run build
 
             echo "run app"
-            pm2 restart dist/index.js
+            pm2 restart ecosystem.config.mjs
 
             echo "Saving PM2 state..."
             pm2 save

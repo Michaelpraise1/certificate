@@ -1,12 +1,11 @@
 module.exports = {
   apps: [
     {
-      name: "gada-certify",
-      script: "npm",
-      args: "start",
+      name: "react-app",
+      script: "npx",
+      args: "serve --name 'gada-certify' -- -s dist -l 3005",
       env: {
-        NODE_ENV: "production",
-        PORT: 3005
+        NODE_ENV: "production"
       }
     }
   ]
