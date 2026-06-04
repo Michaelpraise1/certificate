@@ -32,8 +32,9 @@ export default function SignupPage() {
         email: formData.email,
         password: formData.password
       };
+      const url = import.meta.env.VITE_API_URL;
 
-      const response = await fetch("http://213.199.63.167:3002/api/v1/signup", {
+      const response = await fetch(`${url}/api/v1/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -45,7 +46,7 @@ export default function SignupPage() {
       }
 
       // Redirect to login or verification OTP page depending on backend workflow
-      navigate('/verify-otp');
+      navigate('/dashboard');
     } catch (err: any) {
       setErrorMsg(err.message);
     } finally {
@@ -131,7 +132,7 @@ export default function SignupPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full flex items-center justify-center py-2.5 px-4 rounded-md text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+          className="cursor-pointer w-full flex items-center justify-center py-2.5 px-4 rounded-md text-sm font-semibold text-white bg-primary hover:bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
         >
           {isLoading ? <Loader2 className="animate-spin h-5 w-5" /> : "Sign up"}
         </button>

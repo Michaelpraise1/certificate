@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Input } from '../../components/ui/Input';
 import { Loader2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
+import { login } from '@/src/utils/services';
 
 
 export default function LoginPage() {
@@ -20,25 +21,7 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
-      const url = import.meta.env.VITE_API_URL;
-      const response = await fetch(`${url}api/v1/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to log in. Please check your credentials.");
-      }
-
-      const data = await response.json();
-
-      // Store token if returned
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-
+      await login(formData);
       // Redirect to Verify OTP on partial success
       navigate('/dashboard');
     } catch (err: any) {

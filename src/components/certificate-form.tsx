@@ -1,15 +1,19 @@
 import { Input } from "./ui/Input";
 import { useState } from "react";
 import { PlusCircle, Loader2 } from 'lucide-react';
+import { createCertification, fileSrc } from "../utils/services";
+import { useNavigate } from "react-router-dom";
 
+export default function CertificateForm({ variables, certificateId }: { variables: string; certificateId: number}) {
 
-export default function CertificateForm({ variables, baseUrl }: { variables: string; baseUrl: string; }) {
-
+    const navigate = useNavigate();
     const variableArray: string[] = variables.split(',');
     const defaultValues = Object.fromEntries(variableArray.map(v => [v, ""]));
     const [formData, setFormData] = useState<Record<string, string>>(defaultValues);
     const [fileUpload, setFileUpload] = useState<File | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+
 
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -17,15 +21,21 @@ export default function CertificateForm({ variables, baseUrl }: { variables: str
         setIsLoading(true);
 
 
-        //const request = await fetch();
+        try {
+            await createCertification({
+                formData,
+                doc: fileUpload as File,
+                certificate_id: certificateId
+            });
 
-        // Simulating API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        console.log('Created certification:', formData);
+            navigate("/certifications")
+        } catch (err: any) {
+            setErrorMsg(err.message);
+        } finally {
+            setIsLoading(false);
+        }
 
-        setIsLoading(false);
-        // Reset form or show success toast...
-        setFormData(defaultValues);
+
     };
 
     return (
@@ -52,7 +62,7 @@ export default function CertificateForm({ variables, baseUrl }: { variables: str
                 <p className="text-sm text-gray-600">
                     Please download the recipient template before uploading your file.{' '}
                     <a
-                        href={`${baseUrl}/template/certifySample.csv`}
+                        href={fileSrc('template/certifySample.csv')}
                         target="_blank"
                         rel="noreferrer"
                         className="font-semibold text-primary underline underline-offset-2"
@@ -69,7 +79,6 @@ export default function CertificateForm({ variables, baseUrl }: { variables: str
                     accept={'.csv, .xlsx'}
                 />
 
-                
 
                 <div className="pt-4">
                     <button

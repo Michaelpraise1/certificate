@@ -7,6 +7,8 @@ import SignupPage from './pages/auth/SignupPage';
 
 import DashboardOverview from './pages/dashboard/DashboardOverview';
 import CreateCertificationPage from './pages/dashboard/CreateCertification';
+import ViewCertificationsPage from './pages/dashboard/ViewCertifications';
+import ManageSignaturePage from './pages/dashboard/ManageSignature';
 
 import { guestOnly, requireAuth } from "./utils/middlewares";
 
@@ -41,6 +43,14 @@ export const router = createBrowserRouter([
             {
                 path: "/create-certification",
                 element: <CreateCertificationPage />
+            },
+            {
+                path: "/certifications",
+                element: <ViewCertificationsPage />
+            },
+            {
+                path: "/manage-signature",
+                element: <ManageSignaturePage />
             }
         ]
 

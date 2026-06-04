@@ -25,6 +25,16 @@ export default function DashboardLayout() {
           }>
             Create Certification
           </NavLink>
+          <NavLink to="/certifications" className={({ isActive }) =>
+            `px-3 py-2 rounded ${isActive ? "bg-primary text-white font-bold" : "text-gray-300 hover:text-white"} block px-4 py-2.5 rounded-md text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors`
+          }>
+            View Certifications
+          </NavLink>
+          <NavLink to="/manage-signature" className={({ isActive }) =>
+            `px-3 py-2 rounded ${isActive ? "bg-primary text-white font-bold" : "text-gray-300 hover:text-white"} block px-4 py-2.5 rounded-md text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-zinc-200 transition-colors`
+          }>
+            Manage Signature
+          </NavLink>
         </nav>
         <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
           <Link

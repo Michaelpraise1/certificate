@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CertificateForm from '../../components/certificate-form';
 import { ChevronLeft } from 'lucide-react';
+import { getCertificates, imgSrc } from '@/src/utils/services';
 
 
 type Certificate = {
@@ -15,7 +16,6 @@ type Certificate = {
 export default function CreateCertificationPage() {
   const [certificates, setCertificates] = useState<Certificate[]>([]);
   const [selectedCertificate, setSelectedCertificate] = useState<Certificate | null>(null);
-  const url = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     async function process() {
@@ -28,16 +28,7 @@ export default function CreateCertificationPage() {
 
 
   const fetchCertificates = async () => {
-    const token = localStorage.getItem('token');
-    const request = await fetch(`${url}api/v1/certificates`, {
-      headers: {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    });
-
-    const response = await request.json();
-    return response.data;
+    return await getCertificates();
   }
 
   const selectCertificate = (index: number) => {
@@ -69,8 +60,8 @@ export default function CreateCertificationPage() {
                 certificates.map((cert, idx) =>
                   <div className='p-2 w-fit h-fit cursor-pointer hover:border-gray-700 hover:border' key={idx} onClick={() => selectCertificate(idx)}>
                     {/* image */}
-                    <div className='w-64 h-32 mb-3'>
-                      <img src={`${url}${cert.display}`} alt={cert.title} className='w-full h-full' />
+                    <div className='w-64 mb-3'>
+                      <img src={imgSrc(cert.display)} alt={cert.title} className='w-full h-full' />
                     </div>
                     <div className='text-center text-gray-500'>
                       <span>{cert.title}</span>
@@ -96,7 +87,7 @@ export default function CreateCertificationPage() {
 
 
           <div className='flex justify-center items-center p-3'>
-            <CertificateForm variables={selectedCertificate.variables} baseUrl={url} />
+            <CertificateForm certificateId={selectedCertificate.id} variables={selectedCertificate.variables} />
           </div>
 
         </div>
